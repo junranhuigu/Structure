@@ -4,10 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 public class DateUtil {
-	private static Logger logger = Logger.getLogger(DateUtil.class);
 	/**
 	 * 验证日期是否是在今天
 	 * */
@@ -27,7 +24,8 @@ public class DateUtil {
 			Date date = sdf.parse(time);
 			return date;
 		} catch (Exception e) {
-			logger.error("转换时间失败", e);
+			System.err.println("转换时间失败");
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -40,7 +38,8 @@ public class DateUtil {
 		try {
 			return sdf.format(time);
 		} catch (Exception e) {
-			logger.error("转换时间失败", e);
+			System.err.println("转换时间失败");
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -54,7 +53,8 @@ public class DateUtil {
 			Date date = sdf.parse(time);
 			return date;
 		} catch (Exception e) {
-			logger.error("转换日期失败", e);
+			System.err.println("转换时间失败");
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -67,7 +67,8 @@ public class DateUtil {
 		try {
 			return sdf.format(time);
 		} catch (Exception e) {
-			logger.error("转换日期失败", e);
+			System.err.println("转换时间失败");
+			e.printStackTrace();
 		}
 		return null;
 	}
