@@ -2,21 +2,19 @@ package com.util;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyFactory;
-import java.security.MessageDigest;
-import java.security.PublicKey;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
-import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -69,8 +67,8 @@ public class ChannelUtil {
 				while ((line = bufferedReader.readLine()) != null) {
 					sb.append(line);
 				}
+				streamReader.close();
 			}
-			streamReader.close();
 		}
 		return sb.toString();
 	}
@@ -107,8 +105,8 @@ public class ChannelUtil {
 				while ((line = bufferedReader.readLine()) != null) {
 					sb.append(line);
 				}
+				streamReader.close();
 			}
-			streamReader.close();
 		}
 		return sb.toString();
 	}
@@ -165,8 +163,8 @@ public class ChannelUtil {
 				while ((line = bufferedReader.readLine()) != null) {
 					sb.append(line);
 				}
+				streamReader.close();
 			}
-			streamReader.close();
 		}
 		return sb.toString();
 	}
@@ -186,4 +184,38 @@ public class ChannelUtil {
 		}
 	}
 	
+	/**
+	 * 从网络下载文件
+	 * */
+	public static void download(String url, File file, Charset charset) throws Exception{
+		if(file.exists()){
+			file.delete();
+		}
+		file.createNewFile();
+
+		HttpURLConnection connection = null;
+		connection = (HttpURLConnection) new URL(url).openConnection();
+		
+		connection.getRequestProperty("GET");
+		connection.setUseCaches(false);
+		connection.setDoInput(true);
+		connection.setDoOutput(false);
+		connection.setRequestProperty("charset", charset.name());
+		connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+		connection.setConnectTimeout(3000);
+		connection.setReadTimeout(10000);
+
+		connection.connect();
+		
+		try (	InputStream is = connection.getInputStream();
+				FileOutputStream fos = new FileOutputStream(file);) {
+			byte[] bs = new byte[4096];
+			int len = 0;
+			while((len = is.read(bs)) >= 0){
+				fos.write(bs, 0, len);
+			}
+			fos.flush();
+		}
+		System.out.println(url + "下载完毕 -> " + file.getName());
+	}
 }

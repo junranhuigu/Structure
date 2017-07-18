@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.zip.ZipOutputStream;
 
 public class FileUtil {
 	/**累加保存*/
-	public static void save(List<? extends Object> records, String filePath) throws Exception{
+	public static void save(List<? extends Object> records, String filePath, Charset charset) throws Exception{
 		System.out.println("开始保存" + filePath);
 		long time = System.currentTimeMillis();
 		File file = new File(filePath);
@@ -30,7 +31,7 @@ public class FileUtil {
 		RandomAccessFile fos = new RandomAccessFile(file, "rw");
 		fos.seek(fos.length());
 		for(Object record : records){
-			fos.write(record.toString().getBytes("GBK"));
+			fos.write(record.toString().getBytes(charset));
 		}
 		fos.close();
 		System.out.println(filePath + "保存完毕");
@@ -38,7 +39,7 @@ public class FileUtil {
 	}
 	
 	/**覆盖保存*/
-	public static void cover(List<? extends Object> records, String filePath) throws Exception{
+	public static void cover(List<? extends Object> records, String filePath, Charset charset) throws Exception{
 		System.out.println("开始保存" + filePath);
 		long time = System.currentTimeMillis();
 		File file = new File(filePath);
@@ -54,7 +55,7 @@ public class FileUtil {
 		}
 		try(	FileOutputStream fos = new FileOutputStream(file);){ 
 			for(Object record : records){
-				fos.write(record.toString().getBytes("GBK"));
+				fos.write(record.toString().getBytes(charset));
 			}
 		}
 		System.out.println(filePath + "保存完毕");
