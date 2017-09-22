@@ -1,6 +1,7 @@
 package com.util;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -88,6 +89,23 @@ public class FileUtil {
             System.err.println(file.getName() + "ZIP压缩失败");
             e.printStackTrace();
         }
+	}
+	
+	public static void zipFile(String fileName, byte[] is, ZipOutputStream zos) {
+		try (	ByteArrayInputStream bis = new ByteArrayInputStream(is); 
+				BufferedInputStream bins = new BufferedInputStream(bis, 512);) {
+			ZipEntry entry = new ZipEntry(fileName);
+			zos.putNextEntry(entry);
+			// 向压缩文件中输出数据
+			int nNumber;
+			byte[] buffer = new byte[512];
+			while ((nNumber = bins.read(buffer)) != -1) {
+				zos.write(buffer, 0, nNumber);
+			}
+		} catch (Exception e) {
+			 System.err.println(fileName + "ZIP压缩失败");
+			 e.printStackTrace();
+		}
 	}
 	
 	/**

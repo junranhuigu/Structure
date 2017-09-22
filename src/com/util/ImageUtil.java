@@ -103,4 +103,11 @@ public class ImageUtil {
 	    	e.printStackTrace(); 
 	    } 
 	}
+	
+	public static void main(String[] args) {
+		String file = "C:\\Users\\jiawei\\Desktop\\723ff4118227d95d57c6f4f36bdb639d.jpg";
+		String file2 = "C:\\Users\\jiawei\\Desktop\\6be0877f0126d5e6bb790eb05c0bba18.jpg";
+		scale(file, file, 60);
+		scale(file2, file2, 60);
+	}
 }
