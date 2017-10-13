@@ -39,6 +39,10 @@ public class Counter<T> {
 		}
 	}
 	
+	public int count(T t){
+		return map.get(t) == null ? 0 : map.get(t);
+	}
+	
 	/**
 	 * 获取统计后的结果
 	 * @return key是某个对象 value是该对象出现的次数
