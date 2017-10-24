@@ -26,67 +26,30 @@ import javax.net.ssl.X509TrustManager;
  * */
 public class ChannelUtil {
 	/**
-	 * http POST方式请求交互
+	 * http方式请求交互
 	 * @param uri 请求的路径
 	 * @param params 需要发送的参数内容
-	 * @param isJson 发送内容是否是json形式
+	 * @param requestMethod 请求模式 GET POST DELETE PUT
 	 * @return 请求地址返回的结果
 	 * */
-	public static String httpPost(String uri, String params) throws Exception{
+	public static String http(String uri, String params, String requestMethod) throws Exception{
 		URL url = new URL(uri);
 
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		
-		connection.getRequestProperty("POST");
+		connection.getRequestProperty(requestMethod);
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
-		connection.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 		connection.setRequestProperty("charset", "utf-8");
 		connection.setReadTimeout(30000);
 		connection.setConnectTimeout(30000);
 		
-		DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-		dos.writeBytes(params);
-		dos.flush();
-		dos.close();
-
-		connection.connect();
-		
-		String line = null;
-		BufferedReader bufferedReader = null;
-		StringBuilder sb = new StringBuilder();
-		InputStreamReader streamReader = null;
-		try {
-			streamReader = new InputStreamReader(connection.getInputStream(), "UTF-8");
-		} catch (IOException e) {
-			streamReader = new InputStreamReader(connection.getErrorStream(), "UTF-8");
-		} finally {
-			if (streamReader != null) {
-				bufferedReader = new BufferedReader(streamReader);
-				sb = new StringBuilder();
-				while ((line = bufferedReader.readLine()) != null) {
-					sb.append(line);
-				}
-				streamReader.close();
-			}
+		if(params != null && !"".equals(params)){
+			DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+			dos.writeBytes(params);
+			dos.flush();
+			dos.close();
 		}
-		return sb.toString();
-	}
-	
-	public static String httpGet(String uri, boolean isJson) throws Exception{
-		URL url = new URL(uri);
-
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		
-		connection.getRequestProperty("GET");
-		connection.setDoInput(true);
-		connection.setDoOutput(false);
-		if(isJson){
-			connection.setRequestProperty("content-type", "application/json");
-		}
-		connection.setRequestProperty("charset", "utf-8");
-		connection.setReadTimeout(30000);
-		connection.setConnectTimeout(30000);
 
 		connection.connect();
 		
@@ -116,7 +79,7 @@ public class ChannelUtil {
 	 * @param params 请求参数
 	 * @return
 	 */
-	public static String getSortQueryString(Map<String,String> params) throws Exception {
+	public static String getSortQueryString(Map<String,String> params) {
 		Object[] keys = params.keySet().toArray();
 		Arrays.sort(keys);
 		StringBuffer sb = new StringBuffer();
@@ -131,21 +94,33 @@ public class ChannelUtil {
 		return text;
 	}
 	
-	public static String httpsGet(String path, boolean isJson) throws Exception{
+	/**
+	 * https请求交互
+	 * @param uri 请求的路径
+	 * @param params 需要发送的参数内容
+	 * @param requestMethod 请求模式 GET POST DELETE PUT
+	 * @return 请求地址返回的结果
+	 * */
+	public static String https(String path, String params, String requestMethod) throws Exception{
 		TrustManager[] managers = {new ChannelUtil().provideTrust()};
 		SSLContext context = SSLContext.getInstance("SSL", "SunJSSE");
 		context.init(null, managers, new SecureRandom());
 		
 		HttpsURLConnection connection = (HttpsURLConnection) new URL(path).openConnection();
+		connection.getRequestProperty(requestMethod);
 		connection.setDoInput(true);
-		connection.setDoOutput(false);
+		connection.setDoOutput(true);
 		connection.setConnectTimeout(3000);
 		connection.setSSLSocketFactory(context.getSocketFactory());
 		
 		connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
 		connection.setRequestProperty("charset", "utf-8");
-		if(isJson){
-			connection.setRequestProperty("content-type", "application/json");
+		
+		if(params != null && !"".equals(params)){
+			DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+			dos.writeBytes(params);
+			dos.flush();
+			dos.close();
 		}
 		
 		String line = null;
