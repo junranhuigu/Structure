@@ -220,6 +220,15 @@ public class StringUtil {
 		return matcher.replaceAll("");
 	}
 	
+	/**
+	 * 去除两边文字两边空格
+	 * */
+	public static String filteHeadOrTailBlank(String content){
+		Pattern pattern = Pattern.compile("(^\\s*)|(\\s*$)");
+		Matcher matcher = pattern.matcher(content);
+		return matcher.replaceAll("");
+	}
+	
 	public static void main(String[] args) {
 		System.out.println(getRandomString(10));
 	}
