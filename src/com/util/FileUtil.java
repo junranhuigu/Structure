@@ -32,7 +32,11 @@ public class FileUtil {
 		RandomAccessFile fos = new RandomAccessFile(file, "rw");
 		fos.seek(fos.length());
 		for(Object record : records){
-			fos.write(record.toString().getBytes(charset));
+			String s = record.toString();
+			if(!s.endsWith("\n")){
+				s += "\n";
+			}
+			fos.write(s.getBytes(charset));
 		}
 		fos.close();
 		System.out.println(filePath + "保存完毕");
@@ -56,7 +60,11 @@ public class FileUtil {
 		}
 		try(	FileOutputStream fos = new FileOutputStream(file);){ 
 			for(Object record : records){
-				fos.write(record.toString().getBytes(charset));
+				String s = record.toString();
+				if(!s.endsWith("\n")){
+					s += "\n";
+				}
+				fos.write(s.getBytes(charset));
 			}
 		}
 		System.out.println(filePath + "保存完毕");
