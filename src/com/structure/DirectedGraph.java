@@ -2,6 +2,7 @@ package com.structure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * 单边有向图 本类非线程安全
@@ -80,33 +81,46 @@ public class DirectedGraph {
 	 * 验证是否存在闭合
 	 * */
 	public boolean hasCircle(){
-		//获取所有连接生成映射表
-		int[][] connectMap = new int[nodes.size()][nodes.size()];
-		for(Node node : nodes){
-			for(Connection c : node.getConnections2Others()){
-				int i = nodes.indexOf(c.getFrom());
-				int j = nodes.indexOf(c.getTo());
-				connectMap[i][j] = 1;
-			}
-			for(Connection c : node.getConnections2Self()){
-				int i = nodes.indexOf(c.getFrom());
-				int j = nodes.indexOf(c.getTo());
-				connectMap[i][j] = 1;
+		if(size() == 0){
+			return false;
+		}
+		Stack<Node> stack = new Stack<>();
+		List<Node> ends = endNodes();
+		if(ends.isEmpty()){//无终点 必然存在闭合
+			return true;
+		}
+		List<Node> begins = beginNodes();
+		if(begins.isEmpty()){//无起点 必然存在闭合
+			return true;
+		}
+		for(Node begin : begins){
+			stack.add(begin);
+			if(hasCircle(stack)){
+				return true;
 			}
 		}
-		for(int i = 0; i < connectMap.length; ++ i){
-			int connectCount = 0;
-			for(int j = 0; j < connectMap[i].length; ++ j){
-				if(connectMap[i][j] > 0){
-					 ++ connectCount;
-					 break;
+		return false;
+	}
+	
+	private boolean hasCircle(Stack<Node> stack){
+		if(stack.isEmpty()){
+			return false;
+		}
+		boolean hasCircle = false;
+		Node node = stack.peek();
+		if(!node.getConnections2Others().isEmpty()){//非终点
+			for(Connection con : node.getConnections2Others()){
+				if(stack.contains(con.getTo())){//验证是否存在闭环
+					hasCircle = true;
+					break;
+				} else {
+					stack.add(con.getTo());
+					hasCircle = hasCircle || hasCircle(stack);
 				}
 			}
-			if(connectCount == 0){//有一列全部为0 表示无闭环
-				return false;
-			}
 		}
-		return true;
+		stack.pop();
+		return hasCircle;
 	}
 	/**
 	 * 获取有向图所有的起始节点
@@ -139,6 +153,40 @@ public class DirectedGraph {
 	 * */
 	public int size(){
 		return nodes.size();
+	}
+	
+	/**
+	 * 最长路线
+	 * */
+	public int wayMaxLength(){
+		if(hasCircle()){//存在闭环 则不存在最长路线
+			return -1;
+		}
+		Stack<Node> stack = new Stack<>();
+		int len = 0;
+		for(Node begin : beginNodes()){
+			stack.add(begin);
+			len = Math.max(wayMaxLength(stack), len);
+		}
+		return len;
+	}
+	
+	private int wayMaxLength(Stack<Node> stack){
+		if(stack.isEmpty()){
+			return 0;
+		}
+		Node node = stack.peek();
+		int len = 0;
+		if(node.getConnections2Others().isEmpty()){//终点
+			len = Math.max(stack.size(), len);
+		} else {
+			for(Connection con : node.getConnections2Others()){
+				stack.add(con.getTo());
+				len = Math.max(len, wayMaxLength(stack));
+			}
+		}
+		stack.pop();
+		return len;
 	}
 	
 	/**
