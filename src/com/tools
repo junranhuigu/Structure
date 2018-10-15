@@ -1,0 +1,51 @@
+package com.tools;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.lang.reflect.Method;
+import java.util.List;
+
+/**
+ * Description:
+ *
+ * @author 
+ * @version 1.0.0
+ */
+public class ShowRestfulInSpringMVC {
+
+    public static void main(String[] args) throws  Exception{
+        
+        List<String> list = PackageUtil.getClassName("com.jd.vip.plus.controller", true);
+        System.out.println(list.size());
+        for(String l : list){
+            Class c = Class.forName(l);
+            if(c.getAnnotation(Controller.class) != null && c.getAnnotation(RequestMapping.class) != null){
+                RequestMapping rm = (RequestMapping) c.getAnnotation(RequestMapping.class);
+                String classUrl = rm.value()[0];
+                for(Method method : c.getMethods()){
+                    if(method.getAnnotation(ResponseBody.class) != null){
+                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                        if(requestMapping == null){
+                            continue;
+                        }
+                        String methodUrl = requestMapping.value()[0];
+                        String url = (classUrl.startsWith("/") ? "" : "/") + classUrl + (methodUrl.startsWith("/") ? "" : "/") + methodUrl;
+                        
+//                        String params = "";
+//                        for(Parameter p : method.getParameters()){
+//                            String pname = p.getName();
+//                            String pclass = p.getType().getSimpleName();
+//                            params += pclass + "-" + pname + ",";
+//                        }
+
+                        System.out.println(c.getSimpleName() + " " + method.getName() + " " + url);
+                    }
+                }
+            }
+        }
+    }
+    
+    
+}
