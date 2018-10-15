@@ -9,6 +9,17 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Description:
+ *
+ * @author jiawei6
+ * @version 1.0.0
+ */
+/*
+ * =========================== 维护日志 ===========================
+ * 2018-08-29 15:39  jiawei6 新建代码
+ * =========================== 维护日志 ===========================
+ */
 public class PackageUtil {
 
 	/**
@@ -26,7 +37,7 @@ public class PackageUtil {
 			String type = url.getProtocol();
 			if (type.equals("file")) {
 				fileNames = getClassNameByFile(url.getPath(), null, childPackage);
-				ArrayList<String> _f = new ArrayList<>();
+				ArrayList<String> _f = new ArrayList<String>();
 				for(String file : fileNames){
 					file = file.substring(file.indexOf(packageName));
 					_f.add(file);
@@ -82,7 +93,7 @@ public class PackageUtil {
 		String jarFilePath = jarInfo[0].substring(jarInfo[0].indexOf("/"));
 		String packagePath = jarInfo[1].substring(1);
 		try {
-			JarFile jarFile = new JarFile(jarFilePath);
+			JarFile jarFile = new JarFile(jarFilePath.replace("%20", " "));
 			Enumeration<JarEntry> entrys = jarFile.entries();
 			while (entrys.hasMoreElements()) {
 				JarEntry jarEntry = entrys.nextElement();
