@@ -49,6 +49,49 @@ public class NetUtil {
 		return true;
 	}
 	
+     /**
+     * 获取客户端真实IP地址
+     * @param request
+     * @return
+     */
+    public static String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+
+        // 2015-12-24 liudong 增加 从HTTP_CLIENT_IP和HTTP_X_FORWARDED_FOR 获得 ip
+        // HTTP_X_FORWARDED_FOR，如果通过了多级反向代理的话，X-Forwarded-For的值并不止一个，而是一串ip值，取X-Forwarded-For中第一个非unknown的有效IP字符串
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        if(checkRealIp(ip) && ip.indexOf(",") > 0){
+            // ip字符串，取第一个正常的ip
+            for(String ipStr : ip.split(",")){
+                if(checkRealIp(ipStr)){
+                    ip = ipStr;
+                    return ip;
+                }
+            }
+        }
+
+        return ip;
+    }
+	
 	public static void main(String[] args) {
 		System.out.println(isIPv4("256.1.1.1"));
 		System.out.println("256.1.1.1".split("\\.").length);
