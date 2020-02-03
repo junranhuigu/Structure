@@ -5,16 +5,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 线段管理者
+ * Descirption: 线段管理者
+ * 
+ * @author jiawei29 
+ * @date 2020-02-03 19:14
  * */
 public class Line<T> {
+    /**
+     * 线段部分
+     */
 	private ArrayList<Part> lines = new ArrayList<>();
+	/**
+	 * 线段总值
+	 */
+	@Getter
 	private int total = 0;
-	
-	@SuppressWarnings("hiding")
-	public <T> Line() {
-		// TODO Auto-generated constructor stub
-	}
 	
 	/**
 	 * 添加一个对象
@@ -54,7 +59,7 @@ public class Line<T> {
 	
 	/**
 	 * 传入一个值，重定义在此范围的Part的长度
-	 * @param value : value >= 0 && value < getTotal()
+	 * @param changedValue : value >= 0 && value < getTotal()
 	 * */
 	public boolean resetLength(Part part, int changedValue){
 		if(part != null){
@@ -83,10 +88,9 @@ public class Line<T> {
 		return null;
 	}
 	
-	public int getTotal() {
-		return total;
-	}
-	
+	/**
+	 * 添加对象个数
+	 */
 	public int size(){
 		return lines.size();
 	}
@@ -193,11 +197,17 @@ public class Line<T> {
 		return result;
 	}
 	
+	/**
+	 * 随机获取一个线段
+	 */
 	public T random(){
 		int random = (int) (Math.random() * total);
 		return get(random);
 	}
 	
+	/**
+	 * 随机获取一个线段并删除待选项
+	 */
 	public T randomAndRemove(){
 		int random = (int) (Math.random() * total);
 		T result = get(random);
@@ -208,27 +218,18 @@ public class Line<T> {
 	/**
 	 * 部分： 数据结构 
 	 * @author jiawei
+     * @date 2020-02-03 19:16
 	 * */
+	@Data
+    @AllArgsConstructor
 	public class Part {
-		private int length;
-		private T attachment;//附件
-		public Part(int length, T attachment) {
-			this.length = length;
-			this.attachment = attachment;
-		}
-		public int getLength() {
-			return length;
-		}
-		public void setLength(int length) {
-			this.length = length;
-		}
-		public T getAttachment() {
-			return attachment;
-		}
-		@Override
-		public String toString() {
-			return "Part [length=" + length + ", attachment=" + attachment
-					+ "]";
-		}
+	    /**
+	     * 长度
+	     */
+		int length;
+		/**
+		 * 附件
+		 */
+		T attachment;
 	}
 }
